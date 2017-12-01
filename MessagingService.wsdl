@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:ns0="http://beans.messaging.bs.com/xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:ns1="http://service.messaging.bs.com" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://service.messaging.bs.com">
+    <wsdl:documentation>MessagingService</wsdl:documentation>
+    <wsdl:types>
+        <xs:schema xmlns:ax29="http://beans.messaging.bs.com/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://beans.messaging.bs.com/xsd">
+            <xs:complexType name="Messages">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="content" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="contract" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="fromMessage" nillable="true" type="ns0:Address"/>
+                    <xs:element minOccurs="0" name="idMessage" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="subject" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="timeDelivery" type="xs:long"/>
+                    <xs:element minOccurs="0" name="timeExpire" type="xs:long"/>
+                    <xs:element minOccurs="0" name="typeMessage" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Address">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="idAddress" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="idAlies" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="typeAddress" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="MessageMail">
+                <xs:complexContent>
+                    <xs:extension base="ns0:Messages">
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded" minOccurs="0" name="attachments" nillable="true" type="ns0:Attachment"/>
+                            <xs:element maxOccurs="unbounded" minOccurs="0" name="destinataris" nillable="true" type="ns0:Address"/>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+            <xs:complexType name="Attachment">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="attachmentFile" nillable="true" type="xs:base64Binary"/>
+                    <xs:element minOccurs="0" name="attachmentName" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="idAttachment" nillable="true" type="xs:string"/>
+                    <xs:element minOccurs="0" name="mimeType" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="MessageSMS">
+                <xs:complexContent>
+                    <xs:extension base="ns0:Messages">
+                        <xs:sequence>
+                            <xs:element minOccurs="0" name="destinatari" nillable="true" type="ns0:Address"/>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:ns="http://service.messaging.bs.com" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://service.messaging.bs.com">
+            <xs:element name="sendMail">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="message" nillable="true" type="ns0:MessageMail"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="sendMailResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="sendSMS">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="message" nillable="true" type="ns0:MessageSMS"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="sendSMSResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="sendSMSRequest">
+        <wsdl:part name="parameters" element="ns1:sendSMS"/>
+    </wsdl:message>
+    <wsdl:message name="sendSMSResponse">
+        <wsdl:part name="parameters" element="ns1:sendSMSResponse"/>
+    </wsdl:message>
+    <wsdl:message name="sendMailRequest">
+        <wsdl:part name="parameters" element="ns1:sendMail"/>
+    </wsdl:message>
+    <wsdl:message name="sendMailResponse">
+        <wsdl:part name="parameters" element="ns1:sendMailResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="MessagingServicePortType">
+        <wsdl:operation name="sendSMS">
+            <wsdl:input message="ns1:sendSMSRequest" wsaw:Action="urn:sendSMS"/>
+            <wsdl:output message="ns1:sendSMSResponse" wsaw:Action="urn:sendSMSResponse"/>
+        </wsdl:operation>
+        <wsdl:operation name="sendMail">
+            <wsdl:input message="ns1:sendMailRequest" wsaw:Action="urn:sendMail"/>
+            <wsdl:output message="ns1:sendMailResponse" wsaw:Action="urn:sendMailResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="MessagingServiceSOAP11Binding" type="ns1:MessagingServicePortType">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="sendSMS">
+            <soap:operation soapAction="urn:sendSMS" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sendMail">
+            <soap:operation soapAction="urn:sendMail" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="MessagingServiceSOAP12Binding" type="ns1:MessagingServicePortType">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+        <wsdl:operation name="sendSMS">
+            <soap12:operation soapAction="urn:sendSMS" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sendMail">
+            <soap12:operation soapAction="urn:sendMail" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="MessagingServiceHttpBinding" type="ns1:MessagingServicePortType">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="sendSMS">
+            <http:operation location="MessagingService/sendSMS"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="sendSMS"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="sendSMS"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="sendMail">
+            <http:operation location="MessagingService/sendMail"/>
+            <wsdl:input>
+                <mime:content type="text/xml" part="sendMail"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="sendMail"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="MessagingService">
+        <wsdl:port name="MessagingServiceSOAP11port_http" binding="ns1:MessagingServiceSOAP11Binding">
+            <soap:address location="http://172.18.68.40:7130/axis2/services/MessagingService"/>
+        </wsdl:port>
+        <wsdl:port name="MessagingServiceSOAP12port_http" binding="ns1:MessagingServiceSOAP12Binding">
+            <soap12:address location="http://172.18.68.40:7130/axis2/services/MessagingService"/>
+        </wsdl:port>
+        <wsdl:port name="MessagingServiceHttpport" binding="ns1:MessagingServiceHttpBinding">
+            <http:address location="http://172.18.68.40:7130/axis2/services/MessagingService"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
